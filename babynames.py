@@ -31,6 +31,8 @@ Suggested milestones for incremental development:
  - Fix main() to use the extracted_names list
 """
 
+__author__ = 'Meagan Ramey'
+
 import sys
 import re
 import argparse
@@ -45,6 +47,27 @@ def extract_names(filename):
     """
     names = []
     # +++your code here+++
+    with open(filename, 'r') as f:
+        data = f.read()
+    # print(data)
+    year_pattern = re.compile(r'Popularity\sin\s(\d\d\d\d)')
+    year = year_pattern.findall(data)
+    popular_names_pattern = re.compile(
+        r'<td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>')
+    popular_names = popular_names_pattern.finditer(data)
+    rank_dict = {}
+    name_list = []
+    for i, pop_name in enumerate(popular_names):
+        if i < 100:
+            rank_dict[pop_name.group(1)] = [pop_name.group(2),
+                                            pop_name.group(3)]
+    for rank, name in rank_dict.items():
+        print(rank)
+        print(name)
+        print(rank_dict[rank][0])
+        # name_list += name[0] + ' ' + rank
+        # name_list += f'{name[1]} {rank}'
+    print(name_list)
     return names
 
 
@@ -83,6 +106,8 @@ def main(args):
     # or to write the list to a summary file (e.g. `baby1990.html.summary`).
 
     # +++your code here+++
+    for file in file_list:
+        return extract_names(file)
 
 
 if __name__ == '__main__':
