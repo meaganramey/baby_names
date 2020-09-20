@@ -57,13 +57,13 @@ def extract_names(filename):
     popular_names = popular_names_pattern.finditer(data)
     rank_dict = {}
     names = [''.join(year)]
-    for i, pop_name in enumerate(popular_names):
-        if i < 100:
-            rank_dict[pop_name.group(1)] = [pop_name.group(2),
-                                            pop_name.group(3)]
-    for rank, name in rank_dict.items():
-        names.append(name[0] + ' ' + rank)
-        names.append(f'{name[1]} {rank}')
+    for pop_name in popular_names:
+        if pop_name.group(2) not in rank_dict:
+            rank_dict[pop_name.group(2)] = pop_name.group(1)
+        if pop_name.group(3) not in rank_dict:
+            rank_dict[pop_name.group(3)] = pop_name.group(1)
+    for name, rank in rank_dict.items():
+        names.append(f'{name} {rank}')
     names.sort()
     # print('\n'.join(names))
     return names
@@ -108,8 +108,9 @@ def main(args):
         alpha_names = extract_names(file)
         if not create_summary:
             print('\n'.join(alpha_names))
-        with open(f'baby{alpha_names[0]}.html.summary', 'w') as f:
-            f.write('\n'.join(alpha_names))
+        else:
+            with open(f'baby{alpha_names[0]}.html.summary', 'w') as f:
+                f.write('\n'.join(alpha_names))
 
 
 if __name__ == '__main__':
