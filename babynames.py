@@ -31,6 +31,8 @@ Suggested milestones for incremental development:
  - Fix main() to use the extracted_names list
 """
 
+__author__ = 'Meagan Ramey'
+
 import sys
 import re
 import argparse
@@ -45,6 +47,25 @@ def extract_names(filename):
     """
     names = []
     # +++your code here+++
+    with open(filename, 'r') as f:
+        data = f.read()
+    # print(data)
+    year_pattern = re.compile(r'Popularity\sin\s(\d\d\d\d)')
+    year = year_pattern.findall(data)
+    popular_names_pattern = re.compile(
+        r'<td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>')
+    popular_names = popular_names_pattern.finditer(data)
+    rank_dict = {}
+    names = [''.join(year)]
+    for pop_name in popular_names:
+        if pop_name.group(2) not in rank_dict:
+            rank_dict[pop_name.group(2)] = pop_name.group(1)
+        if pop_name.group(3) not in rank_dict:
+            rank_dict[pop_name.group(3)] = pop_name.group(1)
+    for name, rank in rank_dict.items():
+        names.append(f'{name} {rank}')
+    names.sort()
+    # print('\n'.join(names))
     return names
 
 
@@ -83,6 +104,13 @@ def main(args):
     # or to write the list to a summary file (e.g. `baby1990.html.summary`).
 
     # +++your code here+++
+    for file in file_list:
+        alpha_names = extract_names(file)
+        if not create_summary:
+            print('\n'.join(alpha_names))
+        else:
+            with open(f'baby{alpha_names[0]}.html.summary', 'w') as f:
+                f.write('\n'.join(alpha_names))
 
 
 if __name__ == '__main__':
